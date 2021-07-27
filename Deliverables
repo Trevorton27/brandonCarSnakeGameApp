@@ -1,0 +1,21 @@
+Deliverables
+Single Page Site
+Rules of the game
+1. Snake game ends when snake touches its self , or touches outside wall.
+2. Snake grows one length when it eats the apple.
+3. A new apple should randomly regenerate on the gameboard after current apple has been consumed.
+4. Snake should be controlled by arrows on the keyboard
+5. One point should be added to the score when an apple is consumed.
+
+
+To Do
+1.Learn About git 
+2. Create new git repository locally for this
+3. Create read me file in git repository
+4. Push git repository to GitHub
+5. Create a wireframe for the game
+6. Watch "Code your first game" Udemy Course
+
+
+Design Ideas
+Rimuru Tempest snake game?? Eats little nodes ??
