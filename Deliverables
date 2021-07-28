@@ -19,3 +19,10 @@ To Do
 
 Design Ideas
 Rimuru Tempest snake game?? Eats little nodes ??
+
+
+
+Depicitng Movement
+Run the game 'loop'
+Draw images on canvas
+Update the underlying data(snake,apple)
