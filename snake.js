@@ -1,50 +1,109 @@
-'use strict';
-let canvas;
-let canvasContext;
-let rimuruX =  50;
-let rimuruSpeedX = 15;
+
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+let x =  300;
+let y = 180;
+let speedX = 0;
+let speedY = 0;
+let rimuruHeight = 15;
+let rimuruWidth = 15;
+let rimuruX = (canvas.width)/2;
+let rimuruY = (canvas.height)/2;
 
 
 
-window.onload = function() {
- canvas = document.getElementById('gameCanvas');
- canvasContext = canvas.getContext('2d');
 
- let framesPerSecond = 30;
- setInterval(function() {
-        canvasMove();
-        canvasDraw();
- }, 1000/framesPerSecond);
-}
 
-function canvasMove(){
-  rimuruX += rimuruSpeedX;
-  if(rimuruX >= canvas.width){
-    rimuruSpeedX = -rimuruSpeedX;
+let rightPressed = false;
+let leftPressed = false;
+let upPressed = false;
+let downPressed = false;
+
+
+
+
+document.addEventListener("keydown", keyDownHandler, false);
+document.addEventListener("keyup", keyUpHandler, false);
+
+
+function keyDownHandler(e) {
+  if(e.key == "Right" || e.key == "ArrowRight") {
+      rightPressed = true;
   }
+  else if(e.key == "Left" || e.key == "ArrowLeft") {
+      
+    leftPressed = true;
+  } 
+  else if(e.key == "Up" || e.key =="ArrowUp") {
+      upPressed = true;
+  } 
+  else if(e.key == "Down" || e.key =="ArrowDown") {
+    downPressed = true;
+}
+}
 
-  if(rimuruX < 0) {
-    rimuruSpeedX = -rimuruSpeedX;
+function keyUpHandler(e) {
+  if(e.key == "Right" || e.key == "ArrowRight") {
+      rightPressed = false;
   }
+     else if(e.key == "Left" || e.key == "ArrowLeft") {
+      leftPressed = false;
+  } 
+  
+  else if(e.key == "Up" || e.key =="ArrowUp") {
+    upPressed = false;
+  }    
+  
+  else if(e.key ==  "Down" || e.key =="ArrowDown") {
+  downPressed = false;
+}
 }
 
-function canvasDraw(){
-  colorRect(0,0,canvas.width,canvas.height,'black');
 
-  // Food
-  colorRect(120, 210, 15,15,'green');
-
-  // Rimuru Tempest
-  canvasContext.fillStyle = 'blue';
-  canvasContext.beginPath();
-  canvasContext.arc(rimuruX, 180, 15, 0, Math.PI*2, true);
-  canvasContext.fill();
+function drawRimuru(){
+  ctx.beginPath();
+    ctx.rect(rimuruX, rimuruY, rimuruWidth, rimuruHeight);
+    ctx.fillStyle = "#0095DD";
+    ctx.fill();
+    ctx.closePath();
 }
 
 
 
-
-function colorRect(leftX,topY, width,height, drawColor){
-  canvasContext.fillStyle = drawColor;
-  canvasContext.fillRect(leftX,topY, width,height);
+function drawMinerals(){
+  ctx.beginPath();
+  ctx.rect(40, 50, 15, 15);
+  ctx.fillStyle = "green";
+  ctx.fill();
+  ctx.closePath();
 }
+
+function draw(){
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  drawRimuru();
+  drawMinerals();
+
+
+  if(rightPressed && rimuruX < canvas.width-rimuruWidth) {
+    rimuruX += 4;
+}
+else if(leftPressed && rimuruX > 0) {
+    rimuruX -= 4;
+}
+
+if(upPressed && rimuruY < canvas.height-rimuruWidth) {
+  rimuruY -= 4;
+}
+else if(leftPressed && rimuruY > 0) {
+  rimuruY += 4;
+}
+
+
+x += speedX;
+y += speedY;
+requestAnimationFrame(draw);
+}
+
+
+draw();
