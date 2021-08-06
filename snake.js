@@ -1,27 +1,18 @@
-
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
-let x =  10;
-let y = 10;
-let speedX = 1;
-let speedY = 10;
-let rimuruHeight = 15;
-let rimuruWidth = 15;
-let rimuruX = (canvas.width-rimuruWidth)/2;
-let rimuruY = (canvas.height-rimuruHeight)/2;
-
+const cvs = document.getElementById('snake');
+const ctx = cvs.getContext('2d');
+let slimeHeight = 15;
+let slimeWidth = 15;
+let slimeX = (cvs.width-slimeWidth)/2;
+let slimeY = (cvs.height-slimeHeight)/2;
 let rightPressed = false;
 let leftPressed = false;
 let upPressed = false;
 let downPressed = false;
 
+document.addEventListener('keydown', keyDownHandler, false);
 
 
-
-document.addEventListener("keydown", keyDownHandler, false);
-
-
-
+// Switch to key code eventually
 function keyDownHandler(e) {
   if(e.key == "Right" || e.key == "ArrowRight") {
       rightPressed = true;
@@ -44,27 +35,21 @@ function keyDownHandler(e) {
   leftPressed = false;
   upPressed = false;
   downPressed = true;
+ }
 }
-}
-
-
-
-
 
 function gameOver(){
-  if(rimuruX + rimuruWidth > canvas.width || rimuruX <= 0) {
-   rimuruX = canvas.width/2;
-   rimuruY = canvas.height/2;
-
+  if(slime.x + slime.w > cvs.width || slime.x <= 0) {
+   slime.x = cvs.width/2;
+   slime.y = cvs.height/2;
    rightPressed = false;
    leftPressed = false;
    upPressed = false;
    downPressed = false;
 
-  } else if (rimuruY >= canvas.height || rimuruY < 0) {
-     rimuruX = canvas.width/2;
-     rimuruY = canvas.height/2;
-
+  } else if (slime.y >= cvs.height || slime.y < 0) {
+     slime.x = cvs.width/2;
+     slime.y = cvs.height/2;
      rightPressed = false;
      leftPressed = false;
      upPressed = false;
@@ -72,56 +57,79 @@ function gameOver(){
   } 
 }
 
-// function collisionDetection(){
-//   let rimuruYCenter = rimuruY + (rimuruHeight/2);
-//   if(rimuruYCenter < y-35 || rimuruYCenter > y+35) {
-//      x = 0;
-//      y = 0;
-//   }
-// }
-
-function drawRimuru(){
-  ctx.beginPath();
-    ctx.rect(rimuruX, rimuruY, rimuruWidth, rimuruHeight);
-    ctx.fillStyle = "#0095DD";
-    ctx.fill();
-    ctx.closePath();
+function drawRect(x,y,w,h,color){
+  ctx.fillStyle = color;
+  ctx.fillRect(x, y, w, h);
 }
 
-function drawMinerals(){
+function drawCircle(x,y,r,color){
+  ctx.fillStyle = color;
   ctx.beginPath();
-  ctx.rect(150, 90, 10, 10);
-  ctx.fillStyle = "green";
-  ctx.fill();
+  ctx.arc(x,y,r,0,Math.PI*2,false);
   ctx.closePath();
+  ctx.fill();
 }
+
+function rectsColliding(){
+  if(slime.x > food.x + food.w ||
+    slime.x + slime.w < food.x ||
+    slime.y > food.y + food.h ||
+    slime.y + slime.h < food.y) {
+      console.log('no collision');
+    } else {
+      console.log('collision!');
+    }
+}
+
+
+const slime = {
+  x : slimeX,
+  y : slimeY,
+  w : slimeWidth,
+  h : slimeHeight,
+  color : "blue"
+}
+ 
+const food = {
+  x : 180,
+  y : 240,
+  w : 13,
+  h : 13,
+  color : "brown"
+};
 
 function draw(){
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  drawMinerals();
-  drawRimuru();
+  drawRect(0, 0, cvs.width, cvs.height, "green");
+  // Food
+  drawRect(food.x, food.y, food.w, food.h, food.color);
+  // Rimuru
+  drawRect(slime.x, slime.y, slime.w, slime.h, slime.color);
+}
+
+// game movements / updates
+function update(){
+  // Slime Movement
+  if(rightPressed && slime.x < cvs.width-slime.w) {
+    slime.x += 4;
+}
+else if(leftPressed && slime.x > 0) {
+    slime.x -= 4;
+}
+else if(upPressed && slimeY < cvs.height-slime.h) {
+  slime.y -= 4;
+}
+else if(downPressed && slime.y > 0) {
+  slime.y += 4;
+ } 
+}
+
+function game(){
+  update();
+  draw();
   gameOver();
-  // collisionDetection();
-  
-  
-if(rightPressed && rimuruX < canvas.width-rimuruWidth) {
-    rimuruX += 4;
+  rectsColliding();
 }
-else if(leftPressed && rimuruX > 0) {
-    rimuruX -= 4;
-}
-else if(upPressed && rimuruY < canvas.height-rimuruHeight) {
-  rimuruY -= 4;
-}
-else if(downPressed && rimuruY > 0) {
-  rimuruY += 4;
-}
+const framesPerSecond = 50;
+setInterval(game, 1000/framesPerSecond);
 
 
-
-
-// x += speedX;
-// y += speedY;
-requestAnimationFrame(draw);
-}
-draw();
