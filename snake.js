@@ -4,13 +4,12 @@ let slimeHeight = 15;
 let slimeWidth = 15;
 let slimeX = (cvs.width-slimeWidth)/2;
 let slimeY = (cvs.height-slimeHeight)/2;
-let rightPressed = false;
-let leftPressed = false;
-let upPressed = false;
-let downPressed = false;
+let rightPressed;
+let leftPressed;
+let upPressed;
+let downPressed;
 
 document.addEventListener('keydown', keyDownHandler, false);
-
 
 // Switch to key code eventually
 function keyDownHandler(e) {
@@ -70,19 +69,49 @@ function drawCircle(x,y,r,color){
   ctx.fill();
 }
 
+function newFood(){
+  food = {
+   x : Math.floor(Math.random() * cvs.width),
+   y : Math.floor(Math.random() * cvs.height),
+   w : 13,
+   h : 13,
+   color : "brown"
+ };
+}
+
+
+let newSlime;
+function slimeSize() {
+    newSlime = {
+      x : slimeX + 5,
+      y : slimeY + 5,
+      w : slimeWidth + 5,
+      h : slimeHeight + 5,
+      color : "blue"
+    }
+
+}
+
 function rectsColliding(){
   if(slime.x > food.x + food.w ||
     slime.x + slime.w < food.x ||
     slime.y > food.y + food.h ||
     slime.y + slime.h < food.y) {
-      console.log('no collision');
     } else {
-      console.log('collision!');
+       food = {
+        x : 0,
+        y : 0,
+        w : 0,
+        h : 0,
+        color : ""
+      };
+      slimeSize();
+      setTimeout(newFood, 2500);
     }
 }
 
 
-const slime = {
+let slime = {
   x : slimeX,
   y : slimeY,
   w : slimeWidth,
@@ -90,7 +119,7 @@ const slime = {
   color : "blue"
 }
  
-const food = {
+let food = {
   x : 180,
   y : 240,
   w : 13,
@@ -104,6 +133,8 @@ function draw(){
   drawRect(food.x, food.y, food.w, food.h, food.color);
   // Rimuru
   drawRect(slime.x, slime.y, slime.w, slime.h, slime.color);
+  // New slime
+  // drawRect(newSlime.x, newSlime.y, newSlime.w, newSlime.h, newSlime.color);
 }
 
 // game movements / updates
