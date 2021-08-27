@@ -11,6 +11,7 @@ const bh = cvs.height;
 const p = 10;
 
 let direction = 'null';
+let directionKeys = [];
 
 window.addEventListener("keydown", keyMovement, false);
   
@@ -41,15 +42,16 @@ function keyMovement(e) {
 }   
 
 function reverseSlime(){
-  if(slime.body[1].x > slime.body[0].x) {
-    
+  directionKeys.push(e.keyCode);
+  if(directionKeys[0] != e.keyCode){
+   
   }
 }
 
 // Slime Movement
 function moveSlime(){
   const slimeCopy = slime.body.map(slimePart => Object.assign({}, slimePart))
-  reverseSlime();
+
   
   switch(direction){
     case 'left':
@@ -70,6 +72,16 @@ function moveSlime(){
     slime.body[i] = slimeCopy[i - 1];
    }
 }
+
+function gameReset(){
+  if(slime.body[0].x >= cvs.width || slime.body[0].x <= 0 || slime.body[0].y >= cvs.height || slime.body[0].y <= 0) {
+    direction = null;
+    slime.body[0].x = 250;
+    slime.body[0].y = 200;
+  }
+}
+
+
 
 
 // Slime Eat Food
@@ -165,7 +177,7 @@ function drawRect(x,y,w,h,color){
 function drawMap(){
   drawRect(canvas.x, canvas.y, canvas.w, canvas.h, canvas.color);
   ctx.lineWidth = 1;
-  ctx.strokeStyle = "green";
+  ctx.strokeStyle = "black";
   for (let x = 0; x < bw; x += 25){
     for(let y = 0; y < bh; y += 25){
       ctx.strokeRect(x, y, cvs.height, cvs.width);
@@ -195,6 +207,7 @@ animate();
 
 function game(){
  draw();
+ gameReset();
 //  rectsColliding();
 requestAnimationFrame(game);
 }
