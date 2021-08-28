@@ -1,22 +1,32 @@
 const cvs = document.getElementById('gameCanvas');
 const ctx = cvs.getContext('2d');
-let slimeX = cvs.width/2;
-let slimeY = cvs.height/2;
-let slimeW = 25;
-let slimeH = 25;
+const slimeX = cvs.width/2;
+const slimeY = cvs.height/2;
+const slimeW = 25;
+const slimeH = 25;
 let frame = 0;
-let frameLimit = 9;
+const frameLimit = 9;
 const bw = cvs.width;
 const bh = cvs.height;
 const p = 10;
-
 let direction = 'null';
-let directionKeys = [];
+let collision = false;
+
+// Random Food Respawn Functions
+function getRandomWidth() {
+  return Math.floor(Math.random() * cvs.width / 25) * 25;
+}
+function getRandomHeight() {
+  return Math.floor(Math.random() * cvs.height / 25) * 25;
+}
 
 window.addEventListener("keydown", keyMovement, false);
-  
-function keyMovement(e) {
-    switch(e.keyCode) {
+
+const keyMaker = (e) => {
+    if(direction == 'left' && e.keyCode == 39 || direction == 'right' && e.keyCode == 37 || direction == 'up' && e.keyCode == 40 || direction == 'down' && e.keyCode == 38){
+       e.keyCode = '';
+    } else {
+      switch(e.keyCode) {
         case 37:
           // slime[0].x -= 25;
           direction = 'left';
@@ -35,24 +45,21 @@ function keyMovement(e) {
         case 40:
           // slime[0].y += 25;
           direction = "down";
-            // down key pressed
+            // down key presse3
             break;  
-    } 
+  }
+    }
+}
+
+function keyMovement(e) {
+    keyMaker(e);
     createSlime();  
 }   
-
-function reverseSlime(){
-  directionKeys.push(e.keyCode);
-  if(directionKeys[0] != e.keyCode){
-   
-  }
-}
 
 // Slime Movement
 function moveSlime(){
   const slimeCopy = slime.body.map(slimePart => Object.assign({}, slimePart))
 
-  
   switch(direction){
     case 'left':
       slime.body[0].x -= 25;
@@ -66,15 +73,32 @@ function moveSlime(){
     case 'down':
       slime.body[0].y += 25;
       break;
-  }
-
+}
   for(let i = 1; i < slime.body.length; i++){
     slime.body[i] = slimeCopy[i - 1];
    }
 }
 
+const slimeCheck = () => {
+  for(let i = 3; i < slime.body.length; i++) {
+    if(slime.body[0].x === slime.body[i].x && slime.body[0].y === slime.body[i].y) {
+      console.log('Body Hit')
+      collision = true;
+    } else {
+      console.log('text');
+      return false;
+    }
+  }
+};
+console.log(collision);
+
+
 function gameReset(){
-  if(slime.body[0].x >= cvs.width || slime.body[0].x <= 0 || slime.body[0].y >= cvs.height || slime.body[0].y <= 0) {
+  if(slime.body[0].x > cvs.width || slime.body[0].x < 0 || slime.body[0].y > cvs.height || slime.body[0].y < 0) {
+    direction = null;
+    slime.body[0].x = 250;
+    slime.body[0].y = 200;
+  } else if(slimeCheck == true) {
     direction = null;
     slime.body[0].x = 250;
     slime.body[0].y = 200;
@@ -83,13 +107,13 @@ function gameReset(){
 
 
 
-
 // Slime Eat Food
-function rectsColliding(){
-  if(slime.body[0].x > food.x + food.w ||
-    slime.body[0].x + slime.body[0].w < food.x ||
-    slime.body[0].y > food.y + food.h ||
-    slime.body[0].y + slime.body[0].h < food.y) {
+function slimeEat(){
+  if(slime.body[0].x < food.x + food.w &&
+    slime.body[0].x + slime.body[0].w > food.x &&
+    slime.body[0].y < food.y + food.h &&
+    slime.body[0].y + slime.body[0].h > food.y) {
+      console.log('Collision');
       food = {
            x : 0,
            y : 0,
@@ -102,24 +126,15 @@ function rectsColliding(){
 }
 
  
-// Random respawn functions
-function getRandomWidth() {
-  return Math.floor(Math.random() * cvs.width / 25) * 25;
-}
-function getRandomHeight() {
-  return Math.floor(Math.random() * cvs.height / 25) * 25;
-}
-
 function newFood(){
   food = {
    x : getRandomWidth(),
    y : getRandomHeight(),
-   w : 25,
-   h : 25,
+   w : 24,
+   h : 24,
    color : "red"
  };
 }
-
 
 let food = {
   x : getRandomWidth(),
@@ -129,15 +144,15 @@ let food = {
   color : "red"
 }
 
-const slime = { 
+let slime = { 
   body: [
  {x:250, y:200},
  {x:225, y:200},
  {x:200, y:200},
- {x:175, y:200}
+ {x:175, y:200},
+ {x:150, y:200},
+ {x:125, y: 200}
 ]};
-
-
 
  let canvas = {
   x : 0,
@@ -147,17 +162,6 @@ const slime = {
   color : "green"
 };
 
-// Basic rules to move in links
-// Head always moves in current direction
-// loop through other body parts so rest move to where head use to be
-// What data should do
-// Set variables to DIRECTION on arrow click
-// Before move snake, create copy of body
-// 
-
-
-
-
 function createSlime(){
   for(let i = 0; i < slime.body.length; i++){
     drawRect(slime.body[0].x, slime.body[0].y, slimeW, slimeH, 'blue');
@@ -165,10 +169,9 @@ function createSlime(){
   drawRect(slime.body[1].x, slime.body[1].y, slimeW, slimeH, 'white');
   drawRect(slime.body[2].x, slime.body[2].y, slimeW, slimeH, 'orange');
   drawRect(slime.body[3].x, slime.body[3].y, slimeW, slimeH, 'black');
+  drawRect(slime.body[4].x, slime.body[4].y, slimeW, slimeH, 'yellow');
+  drawRect(slime.body[5].x, slime.body[5].y, slimeW, slimeH, 'orange');
 }
-
-
-
 
 function drawRect(x,y,w,h,color){
   ctx.fillStyle = color;
@@ -185,10 +188,8 @@ function drawMap(){
   }
 }
 
-
 function draw(){
   drawMap();
-  // Food
   drawRect(food.x, food.y, food.w, food.h, food.color);
   createSlime();
  }
@@ -208,7 +209,7 @@ animate();
 function game(){
  draw();
  gameReset();
-//  rectsColliding();
+ slimeEat()
 requestAnimationFrame(game);
 }
 game();
