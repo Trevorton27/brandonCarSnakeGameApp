@@ -11,6 +11,7 @@ const bh = cvs.height;
 const p = 10;
 let direction = 'null';
 let collision = false;
+let playerScore = 0;
 
 // Random Food Respawn Functions
 function getRandomWidth() {
@@ -22,7 +23,7 @@ function getRandomHeight() {
 
 window.addEventListener("keydown", keyMovement, false);
 
-const keyMaker = (e) => {
+const noReverse = (e) => {
     if(direction == 'left' && e.keyCode == 39 || direction == 'right' && e.keyCode == 37 || direction == 'up' && e.keyCode == 40 || direction == 'down' && e.keyCode == 38){
        e.keyCode = '';
     } else {
@@ -50,9 +51,9 @@ const keyMaker = (e) => {
   }
     }
 }
-
+ 
 function keyMovement(e) {
-    keyMaker(e);
+    noReverse(e);
     createSlime();  
 }   
 
@@ -90,7 +91,7 @@ const slimeCheck = () => {
     }
   }
 };
-console.log(collision);
+
 
 
 function gameReset(){
@@ -105,23 +106,23 @@ function gameReset(){
   }
 }
 
-
+function increaseSlime() {
+  slime.body 
+}
 
 // Slime Eat Food
 function slimeEat(){
-  if(slime.body[0].x < food.x + food.w &&
-    slime.body[0].x + slime.body[0].w > food.x &&
-    slime.body[0].y < food.y + food.h &&
-    slime.body[0].y + slime.body[0].h > food.y) {
+  if(slime.body[0].x === food.x && slime.body[0].y === food.y) {
       console.log('Collision');
-      food = {
-           x : 0,
-           y : 0,
-           w : 0,
-           h : 0,
-           color : ""
-         };
-         setTimeout(newFood, 2500);
+        food = {
+          x : 0,
+          y : 0,
+          w : 0,
+          h : 0,
+          color : ''
+        }
+        increaseSlime();
+        setTimeout(newFood, 2500);
     } 
 }
 
@@ -147,12 +148,15 @@ let food = {
 let slime = { 
   body: [
  {x:250, y:200},
- {x:225, y:200},
- {x:200, y:200},
- {x:175, y:200},
- {x:150, y:200},
- {x:125, y: 200}
+//  {x:225, y:200},
+//  {x:200, y:200},
+//  {x:175, y:200},
+//  {x:150, y:200},
+//  {x:125, y: 200}
 ]};
+
+
+
 
  let canvas = {
   x : 0,
@@ -166,11 +170,14 @@ function createSlime(){
   for(let i = 0; i < slime.body.length; i++){
     drawRect(slime.body[0].x, slime.body[0].y, slimeW, slimeH, 'blue');
   }
-  drawRect(slime.body[1].x, slime.body[1].y, slimeW, slimeH, 'white');
-  drawRect(slime.body[2].x, slime.body[2].y, slimeW, slimeH, 'orange');
-  drawRect(slime.body[3].x, slime.body[3].y, slimeW, slimeH, 'black');
-  drawRect(slime.body[4].x, slime.body[4].y, slimeW, slimeH, 'yellow');
-  drawRect(slime.body[5].x, slime.body[5].y, slimeW, slimeH, 'orange');
+  for(let i = 1; i < slime.body.length; i++) {
+    drawRect(slime.body[i].x, slime.body[i].y, slimeW, slimeH);
+  }
+  // drawRect(slime.body[1].x, slime.body[1].y, slimeW, slimeH, 'white');
+  // drawRect(slime.body[2].x, slime.body[2].y, slimeW, slimeH, 'orange');
+  // drawRect(slime.body[3].x, slime.body[3].y, slimeW, slimeH, 'black');
+  // drawRect(slime.body[4].x, slime.body[4].y, slimeW, slimeH, 'yellow');
+  // drawRect(slime.body[5].x, slime.body[5].y, slimeW, slimeH, 'orange');
 }
 
 function drawRect(x,y,w,h,color){
@@ -214,6 +221,3 @@ requestAnimationFrame(game);
 }
 game();
 
-
-// Function that stops movement if snake body is there
-// check for snake[1] and > or < x or y
