@@ -81,12 +81,10 @@ function moveSlime(){
 }
 
 const slimeCheck = () => {
-  for(let i = 3; i < slime.body.length; i++) {
+  for(let i = 1; i < slime.body.length; i++) {
     if(slime.body[0].x === slime.body[i].x && slime.body[0].y === slime.body[i].y) {
-      console.log('Body Hit')
       collision = true;
     } else {
-      console.log('text');
       return false;
     }
   }
@@ -95,15 +93,11 @@ const slimeCheck = () => {
 
 
 function gameReset(){
-  if(slime.body[0].x > cvs.width || slime.body[0].x < 0 || slime.body[0].y > cvs.height || slime.body[0].y < 0) {
+  if(slime.body[0].x > cvs.width || slime.body[0].x < 0 || slime.body[0].y > cvs.height || slime.body[0].y < 0 || collision == true) {
     direction = null;
     slime.body[0].x = 250;
     slime.body[0].y = 200;
-  } else if(slimeCheck == true) {
-    direction = null;
-    slime.body[0].x = 250;
-    slime.body[0].y = 200;
-  }
+  } 
 }
 
 function increaseSlime() {
@@ -148,7 +142,7 @@ let food = {
 let slime = { 
   body: [
  {x:250, y:200},
-//  {x:225, y:200},
+ {x:225, y:200},
 //  {x:200, y:200},
 //  {x:175, y:200},
 //  {x:150, y:200},
@@ -173,7 +167,7 @@ function createSlime(){
   for(let i = 1; i < slime.body.length; i++) {
     drawRect(slime.body[i].x, slime.body[i].y, slimeW, slimeH);
   }
-  // drawRect(slime.body[1].x, slime.body[1].y, slimeW, slimeH, 'white');
+  drawRect(slime.body[1].x, slime.body[1].y, slimeW, slimeH, 'white');
   // drawRect(slime.body[2].x, slime.body[2].y, slimeW, slimeH, 'orange');
   // drawRect(slime.body[3].x, slime.body[3].y, slimeW, slimeH, 'black');
   // drawRect(slime.body[4].x, slime.body[4].y, slimeW, slimeH, 'yellow');
@@ -217,6 +211,7 @@ function game(){
  draw();
  gameReset();
  slimeEat()
+ slimeCheck();
 requestAnimationFrame(game);
 }
 game();
