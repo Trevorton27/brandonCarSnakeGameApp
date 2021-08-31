@@ -12,8 +12,14 @@ const p = 10;
 let direction = 'null';
 let collision = false;
 let playerScore = 0;
+let play = false;
 
 
+window.addEventListener("keydown", startGame, false);
+
+function startGame(e) {
+  
+}
 
 // Score && Start / Lose Screen
 const increaseScore = () => {
@@ -23,8 +29,10 @@ const increaseScore = () => {
 
 
 // Start Screen
-function startScreen(){
-
+const startScreen = (e) => {
+  if(e.keyCode === 13) {
+    play = true;
+  }
 }
 
 
@@ -69,6 +77,9 @@ function keyMovement(e) {
 
 const moveSlime = () => {
   const slimeCopy = slime.body.map(slimePart => Object.assign({}, slimePart))
+  for(let i = 1; i < slime.body.length; i++){
+    slime.body[i] = slimeCopy[i - 1];
+  }
   switch(direction){
     case 'left':
       slime.body[0].x -= 25;
@@ -88,17 +99,22 @@ const moveSlime = () => {
    }
 }
 
+function createSlime(){
+  for(let i = 0; i < slime.body.length; i++){
+    drawRect(slime.body[0].x, slime.body[0].y, slimeW, slimeH, 'blue');
+  }
+  for(let i = 1; i < slime.body.length; i++) {
+    drawRect(slime.body[i].x, slime.body[i].y, slimeW, slimeH);
+  }
+}
+
 function slimeCheck(){
-  console.log('test');
   for(let i = 1; i < slime.body.length; i++) {
     if(slime.body[0].x === slime.body[i].x && slime.body[0].y === slime.body[i].y) {
       collision = true;
-      gameReset();
       console.log("collision!");
       return true;
-    } else {
-      return false;
-    }
+    } 
   }
 };
 
@@ -109,8 +125,8 @@ const gameReset = () => {
       body: [
      {x:250, y:200},
     ]};
-    newFood();
     playerScore = 0;
+    play = false;
   } 
 }
 
@@ -151,8 +167,8 @@ function newFood(){
 let food = {
   x : getRandomWidth(),
   y : getRandomHeight(),
-  w : 24,
-  h : 24,
+  w : 25,
+  h : 25,
   color : "red"
 }
 
@@ -160,6 +176,12 @@ let food = {
 let slime = { 
 body: [
  {x:250, y:200},
+//  {x:225, y:200},
+//  {x:200, y:200},
+//  {x:175, y:200},
+//  {x:150, y:200},
+//  {x:125, y:200},
+//  {x:100, y:200}
 ]};
  
 function newSlime(){
@@ -178,15 +200,6 @@ function newSlime(){
   color : "green"
 };
 
-function createSlime(){
-  for(let i = 0; i < slime.body.length; i++){
-    drawRect(slime.body[0].x, slime.body[0].y, slimeW, slimeH, 'blue');
-  }
-  for(let i = 1; i < slime.body.length; i++) {
-    drawRect(slime.body[i].x, slime.body[i].y, slimeW, slimeH);
-  }
-}
-
 function drawRect(x,y,w,h,color){
   ctx.fillStyle = color;
   ctx.fillRect(x, y, w, h);
@@ -201,7 +214,6 @@ function drawMap(){
     }
   }
 }
-
 
 // Controlling Speed Of Slime 
 function animate() {
@@ -224,8 +236,19 @@ function game(){
  draw();
  gameReset();
  slimeEat();
- slimeCheck();
+ if(slimeCheck()) {
+   console.log('Game over');
+ }
+ startGame();
 requestAnimationFrame(game);
 }
 game();
+
+
+// Just make it normal snake game, too much work. 
+// Redo gameover function
+// Figure out Start screen
+// Style stuff
+// Update Score 
+// Potentially learn how to save things to local storage
 
