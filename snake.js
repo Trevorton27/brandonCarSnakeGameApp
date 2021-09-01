@@ -14,27 +14,12 @@ let collision = false;
 let playerScore = 0;
 let play = false;
 const startScreen = document.querySelector('.startScreen');
-
-
-// Maybe Add Mobile Scaling??
-
-// Redo gameover function
-// Potentially learn how to save things to local storage
-
+const gameOverScreen = document.querySelector('.loseScreen');
 
 // Score && Start / Lose Screen
 const increaseScore = () => {
   playerScore++;
 }
-
-const endGame = () => {
-     drawRect(0, 0, cvs.width, cvs.height, "red");
-     ctx.font = "30px Arial";
-     ctx.fillStyle = "white";
-     ctx.textAlign = 'center';
-     ctx.fillText("Game Over", 250, 200);
-}
-endGame();
 
 const resetPlayer = () => {
   direction = null;
@@ -56,10 +41,18 @@ document.getElementById('startBtn').addEventListener('click', (e) => {
 const gameReset = () => {
   if(snake.body[0].x > cvs.width || snake.body[0].x < 0 || snake.body[0].y > cvs.height || snake.body[0].y < 0 || collision) {
    resetPlayer();
-   startScreen.classList.remove('hidden');
-   alert('Game Over');
+   gameOverScreen.classList.remove('hidden');
   } 
 }
+
+// GameOver Screen
+document.getElementById('newGameBtn').addEventListener('click', (e) => {
+  startScreen.classList.remove('hidden');
+  gameOverScreen.classList.add('hidden');
+
+});
+
+
 
 // Random Food Respawn Functions
 function getRandomWidth() {
