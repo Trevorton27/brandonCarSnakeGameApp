@@ -8,17 +8,31 @@
   <title>Snake Game</title>
 </head>
 <body>
-<h1>TBD</h1>
+<h1 id="title">Brandon's Vanilla JS Snake Game</h1>
   <div class="container">
     <img class="img" src="" alt="">
+    <div class="startScreen">
+      <h1>Super Fun Snake Game</h1>
+      <button id="startBtn">Start Game!</button>
+    </div>
 
-    <canvas id="gameCanvas" width="500" height="400"></canvas>
+    <canvas id="gameCanvas"width='500px' height='400px'></canvas>
     <section id="sideBar">
       <div class="score">
-        <h2>Minerals Eaten</h2>
-        <p class="playerScore">1</p>
+        <h2>Mice Eaten!</h2>
+        <p class="playerScore"></p>
       </div>
-      <div class="directions"></div>
+      <div class="directions">
+        <h2>The Rules!</h3>
+        <h3>How to play:</h3>
+        <ol>
+          <li>Use The Arrow Keys To Move The Snake</li>
+          <li>Eat The "Mice" To Become The Biggest Snake You Can</li>
+          <h4>What To Avoid</h6>
+          <li>Avoid eating your tail!</li>
+          <li>Avoid Hitting The Walls!</li>
+        </ol>
+      </div>
     </section>
 
   </div>

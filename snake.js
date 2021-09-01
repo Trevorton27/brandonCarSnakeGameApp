@@ -1,9 +1,9 @@
 const cvs = document.getElementById('gameCanvas');
 const ctx = cvs.getContext('2d');
-const slimeX = cvs.width/2;
-const slimeY = cvs.height/2;
-const slimeW = 25;
-const slimeH = 25;
+const snakeX = cvs.width/2;
+const snakeY = cvs.height/2;
+const  snakeW = 25;
+const snakeH = 25;
 let frame = 0;
 const frameLimit = 9;
 const bw = cvs.width;
@@ -13,29 +13,53 @@ let direction = 'null';
 let collision = false;
 let playerScore = 0;
 let play = false;
+const startScreen = document.querySelector('.startScreen');
 
 
-window.addEventListener("keydown", startGame, false);
+// Maybe Add Mobile Scaling??
 
-function startGame(e) {
-  
-}
+// Redo gameover function
+// Potentially learn how to save things to local storage
+
 
 // Score && Start / Lose Screen
 const increaseScore = () => {
   playerScore++;
-  console.log(playerScore);
 }
 
+const endGame = () => {
+     drawRect(0, 0, cvs.width, cvs.height, "red");
+     ctx.font = "30px Arial";
+     ctx.fillStyle = "white";
+     ctx.textAlign = 'center';
+     ctx.fillText("Game Over", 250, 200);
+}
+endGame();
 
-// Start Screen
-const startScreen = (e) => {
-  if(e.keyCode === 13) {
-    play = true;
-  }
+const resetPlayer = () => {
+  direction = null;
+  snake = { 
+    body: [
+   {x:250, y:200},
+  ]};
+  playerScore = 0;
+  play = false;
+  collision = false;
 }
 
+// Start Game Button
+document.getElementById('startBtn').addEventListener('click', (e) => {
+   startScreen.classList.add('hidden');
+});
 
+
+const gameReset = () => {
+  if(snake.body[0].x > cvs.width || snake.body[0].x < 0 || snake.body[0].y > cvs.height || snake.body[0].y < 0 || collision) {
+   resetPlayer();
+   startScreen.classList.remove('hidden');
+   alert('Game Over');
+  } 
+}
 
 // Random Food Respawn Functions
 function getRandomWidth() {
@@ -69,70 +93,60 @@ const noReverse = (e) => {
     }
     e.preventDefault();
 }
+
  
 function keyMovement(e) {
     noReverse(e);
-    createSlime();  
+    createSnake();  
 }   
 
-const moveSlime = () => {
-  const slimeCopy = slime.body.map(slimePart => Object.assign({}, slimePart))
-  for(let i = 1; i < slime.body.length; i++){
-    slime.body[i] = slimeCopy[i - 1];
+const moveSnake = () => {
+  const snakeCopy = snake.body.map(snakePart => Object.assign({}, snakePart))
+  for(let i = 1; i < snake.body.length; i++){
+    snake.body[i] = snakeCopy[i - 1];
   }
   switch(direction){
     case 'left':
-      slime.body[0].x -= 25;
+      snake.body[0].x -= 25;
       break;
     case 'up':
-      slime.body[0].y -= 25;
+      snake.body[0].y -= 25;
       break;
     case 'right':
-      slime.body[0].x += 25;
+      snake.body[0].x += 25;
       break;
     case 'down':
-      slime.body[0].y += 25;
+      snake.body[0].y += 25;
       break;
 }
-  for(let i = 1; i < slime.body.length; i++){
-    slime.body[i] = slimeCopy[i - 1];
+  for(let i = 1; i < snake.body.length; i++){
+    snake.body[i] = snakeCopy[i - 1];
    }
 }
 
-function createSlime(){
-  for(let i = 0; i < slime.body.length; i++){
-    drawRect(slime.body[0].x, slime.body[0].y, slimeW, slimeH, 'blue');
+function createSnake(){
+  for(let i = 0; i < snake.body.length; i++){
+    drawRect(snake.body[0].x, snake.body[0].y, snakeW, snakeH, 'blue');
   }
-  for(let i = 1; i < slime.body.length; i++) {
-    drawRect(slime.body[i].x, slime.body[i].y, slimeW, slimeH);
+  for(let i = 1; i < snake.body.length; i++) {
+    drawRect(snake.body[i].x, snake.body[i].y, snakeW, snakeH);
   }
 }
 
-function slimeCheck(){
-  for(let i = 1; i < slime.body.length; i++) {
-    if(slime.body[0].x === slime.body[i].x && slime.body[0].y === slime.body[i].y) {
+function snakeCheck(){
+  for(let i = 1; i < snake.body.length; i++) {
+    if(snake.body[0].x === snake.body[i].x && snake.body[0].y === snake.body[i].y) {
       collision = true;
-      console.log("collision!");
       return true;
     } 
   }
 };
 
-const gameReset = () => {
-  if(slime.body[0].x > cvs.width || slime.body[0].x < 0 || slime.body[0].y > cvs.height || slime.body[0].y < 0 || collision) {
-    direction = null;
-    slime = { 
-      body: [
-     {x:250, y:200},
-    ]};
-    playerScore = 0;
-    play = false;
-  } 
-}
+
 
 // Slime Eat Food
-const slimeEat = () => {
-  if(slime.body[0].x === food.x && slime.body[0].y === food.y) {
+const snakeEat = () => {
+  if(snake.body[0].x === food.x && snake.body[0].y === food.y) {
         food = {
           x : 0,
           y : 0,
@@ -141,13 +155,13 @@ const slimeEat = () => {
           color : ''
         }
         increaseScore();
-        newSlime();
-        slimeFoodCheck();
+        newSnake();
+        snakeFoodCheck();
     } 
 }
-const slimeFoodCheck = () => {
-  for(let i = 0;i < slime.body.length; i++){
-    if(food.x === slime.body[i].x && food.y === slime.body[i].y) {
+const snakeFoodCheck = () => {
+  for(let i = 0;i < snake.body.length; i++){
+    if(food.x === snake.body[i].x && food.y === snake.body[i].y) {
       newFood();
     } else {
       setTimeout(newFood, 2000);
@@ -173,23 +187,17 @@ let food = {
 }
 
 
-let slime = { 
+let snake = { 
 body: [
  {x:250, y:200},
-//  {x:225, y:200},
-//  {x:200, y:200},
-//  {x:175, y:200},
-//  {x:150, y:200},
-//  {x:125, y:200},
-//  {x:100, y:200}
 ]};
  
-function newSlime(){
-  let slimePiece = {
-    x : slime.body.length-1,
-    y : slime.body.y
+function newSnake(){
+  let snakePiece = {
+    x : snake.body.length-1,
+    y : snake.body.y
   };
-  slime.body.push(slimePiece);
+  snake.body.push(snakePiece);
 }
 
  let canvas = {
@@ -219,7 +227,7 @@ function drawMap(){
 function animate() {
   frame++
   if(frame % frameLimit === 0) {
-    moveSlime();
+    moveSnake();
   }
   requestAnimationFrame(animate)
 }
@@ -229,26 +237,20 @@ animate();
 function draw(){
   drawMap();
   drawRect(food.x, food.y, food.w, food.h, food.color);
-  createSlime();
+  createSnake();
  }
 
 function game(){
  draw();
+ document.querySelector('.playerScore').innerHTML = playerScore;
  gameReset();
- slimeEat();
- if(slimeCheck()) {
+ snakeEat();
+ if(snakeCheck()) {
    console.log('Game over');
  }
- startGame();
 requestAnimationFrame(game);
 }
 game();
 
 
-// Just make it normal snake game, too much work. 
-// Redo gameover function
-// Figure out Start screen
-// Style stuff
-// Update Score 
-// Potentially learn how to save things to local storage
 
